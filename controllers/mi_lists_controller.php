@@ -128,6 +128,10 @@ class MiListsController extends MiListsAppController {
 		return $this->render('/elements/lookup_results');
 	}
 
+	public function admin_manage($superSection = null) {
+
+	}
+
 	public function admin_multi_add() {
 		if ($this->data) {
 			$data = array();

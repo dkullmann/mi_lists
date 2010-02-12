@@ -5,7 +5,7 @@ echo $form->create(null, array('action' => 'multi_process'));
 <?php
 $this->set('title_for_layout', __d('mi_lists', 'Mi Lists', true));
 $th = array(
-	$form->checkbox('Mark.allMi Lists', array('class' => 'markAll')),
+	$form->checkbox('Mark.all Lists', array('class' => 'markAll')),
 	$paginator->sort('super_section'),
 	$paginator->sort('section'),
 	$paginator->sort('order'),
