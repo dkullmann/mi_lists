@@ -288,12 +288,13 @@ class MiListsController extends MiListsAppController {
 				}
 				$alias = Inflector::underscore(Inflector::pluralize($model));
 				$sets[$alias] = $Model->find('list', array('conditions' => array(
-					$Model->primaryKey => $ids
+					$Model->alias . '.' . $Model->primaryKey => $ids
 				)));
 			}
 		} else {
 			$models = array_values(MiCache::mi('models'));
 			$sets['models'] = array_combine($models, $models);
 		}
+		$this->set($sets);
 	}
 }
