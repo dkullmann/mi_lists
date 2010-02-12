@@ -18,6 +18,12 @@ class MiList extends MiListsAppModel {
 		)
 	);
 
+	public $order = array(
+		'super_section',
+		'section',
+		'order'
+	);
+
 	function autoPopulate($sections = array()) {
 		$sections = (array)$sections;
 		ksort($sections);
@@ -30,8 +36,7 @@ class MiList extends MiListsAppModel {
 	function _autoPopulate($section = null) {
 		$settings = MiCache::setting('Lists.' . $section);
 		$Model = ClassRegistry::init($settings['model']);
-		$this->debug(2, true);
-		$conditions = (array)json_decode($settings['conditions'], true);
+		$conditions = $settings['conditions'];
 		$this->Behaviors->disable('List');
 		$conditions['NOT']['id'] = array_values($this->find('list', array(
 			'conditions' => array('super_section' => $settings['superSection']),
