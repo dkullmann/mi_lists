@@ -16,7 +16,7 @@ class MiListsController extends MiListsAppController {
 			if (empty($params['allowAutoUpdate'])) {
 				continue;
 			}
-			$toProcess[$params['relatedId']][$params['priority']] = $section;
+			$toProcess[$params['superSection']][$params['priority']] = $section;
 		}
 		foreach($toProcess as $listPacket) {
 			$this->MiList->autoPopulate($listPacket);

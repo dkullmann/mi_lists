@@ -29,13 +29,13 @@ $config = array (
 				'value' => 'A list of 2 entries',
 				'type' => 'string',
 			),
-			'relatedId' => array (
+			'superSection' => array (
 				'description' => 'This allows updating multiple lists at once, can be anything',
 				'value' => '1',
 				'type' => 'string',
 			),
 			'priority' => array (
-				'description' => 'Used for order with relatedId, If autopopulated, what order should the list be processed in.',
+				'description' => 'Used for order with superSection, If autopopulated, what order should the list be processed in.',
 				'value' => 1,
 				'type' => 'integer',
 			),
@@ -76,13 +76,13 @@ $config = array (
 				'value' => 'A list of 6 entries',
 				'type' => 'string',
 			),
-			'relatedId' => array (
+			'superSection' => array (
 				'description' => 'This allows updating multiple lists at once, can be anything',
 				'value' => '1',
 				'type' => 'string',
 			),
 			'priority' => array (
-				'description' => 'Used for order with relatedId, If autopopulated, what order should the list be processed in.',
+				'description' => 'Used for order with superSection, If autopopulated, what order should the list be processed in.',
 				'value' => 2,
 				'type' => 'integer',
 			),
@@ -123,13 +123,13 @@ $config = array (
 				'value' => 'A list of 8 entries',
 				'type' => 'string',
 			),
-			'relatedId' => array (
+			'superSection' => array (
 				'description' => 'This allows updating multiple lists at once, can be anything',
 				'value' => '1',
 				'type' => 'string',
 			),
 			'priority' => array (
-				'description' => 'Used for order with relatedId, If autopopulated, what order should the list be processed in.',
+				'description' => 'Used for order with superSection, If autopopulated, what order should the list be processed in.',
 				'value' => 3,
 				'type' => 'integer',
 			),

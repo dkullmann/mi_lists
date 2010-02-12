@@ -34,7 +34,7 @@ class MiList extends MiListsAppModel {
 		$conditions = (array)json_decode($settings['conditions'], true);
 		$this->Behaviors->disable('List');
 		$conditions['NOT']['id'] = array_values($this->find('list', array(
-			'conditions' => array('related_section' => $settings['relatedId']),
+			'conditions' => array('super_section' => $settings['superSection']),
 			'fields' => array('foreign_id', 'foreign_id'),
 		)));
 		$this->Behaviors->enable('List');
@@ -48,7 +48,7 @@ class MiList extends MiListsAppModel {
 			$this->create();
 			$toSave = array(
 				'section' => $section,
-				'related_section' => $settings['relatedId'],
+				'super_section' => $settings['superSection'],
 				'model' => $settings['model'],
 				'foreign_id' => $id,
 			);
