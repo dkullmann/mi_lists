@@ -2,11 +2,11 @@
 	<?php echo $this->element('mi_lists/select'); ?>
 </div>
 <div class="halfWidthRight">
-<?php foreach ($sections as $id => $section): ?>
+<?php foreach ($config['sublists'] as $section): ?>
 	<div class="container droppable">
 		<h3><?php echo $section['name'] . ' [' . $section['limit'] . ' ]' ?></h3>
 		<?php
-		echo $this->element('mi_lists/pick_list', array('data' => $section, 'section' => 1));
+		echo $this->element('mi_lists/pick_list', array('data' => $sections[$section['name']], 'section' => $section));
 		?>
 	</div>
 <?php endforeach; ?>

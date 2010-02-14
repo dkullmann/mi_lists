@@ -26,8 +26,8 @@ foreach ($data as $i => $row) {
 		array(
 			$form->checkbox('MiList.' . $MiList['id'], array('class' => 'identifyRow')) .
 				$html->link($MiList['id'], array('action' => 'view', $MiList['id']), array('class' => 'hidden')),
-			$MiList['super_section'],
-			$MiList['section'],
+			$html->link($MiList['super_section'], array('action' => 'manage', $MiList['super_section'])),
+			$html->link($MiList['section'], array('action' => 'manage', $MiList['super_section'], $MiList['section'])),
 			$MiList['order'],
 			$html->link(${$linkedController}[$MiList['foreign_id']], array('controller' => $linkedController, 'action' => 'view', $MiList['foreign_id'])),
 			implode($actions)
@@ -54,3 +54,9 @@ $menu->add(array(
 	array('title' => __d('mi_lists', 'Auto populate', true), 'url' => array('action' => 'auto_populate')),
 	//array('title' => __d('mi_lists', 'Edit These Mi Lists', true), 'url' => am($this->passedArgs, array('action' => 'multi_edit')))
 ));
+$sections = array_keys(MiCache::setting('Lists'));
+foreach($sections as $section) {
+	$menu->add(array(
+		array('title' => sprintf(__d('mi_lists', 'Manage "%s"', true), $section), 'url' => array('action' => 'manage', $section)),
+	));
+}

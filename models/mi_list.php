@@ -24,22 +24,29 @@ class MiList extends MiListsAppModel {
 		'order'
 	);
 
-	function autoPopulate($sections = array()) {
+	function autoPopulate($superSection = null, $sections = array()) {
 		$sections = (array)$sections;
 		ksort($sections);
-		$this->deleteAll(array('section' => $sections));
+		if($sections) {
+			$this->deleteAll(array('section' => $sections));
+		} else {
+			$this->deleteAll(array('super_section' => $superSection));
+			$sections = array_keys(MiCache::setting("Lists.$superSection.sublists"));
+		}
 		foreach($sections as $section) {
-			$this->_autoPopulate($section);
+			$this->_autoPopulate($superSection, $section);
 		}
 	}
 
-	function _autoPopulate($section = null) {
-		$settings = MiCache::setting('Lists.' . $section);
+	function _autoPopulate($superSection, $section = null) {
+		$sSettings = MiCache::setting("Lists.$superSection");
+		$settings = MiCache::setting("Lists.$superSection.sublists.$section");
+		$settings = array_merge($sSettings, $settings);
 		$Model = ClassRegistry::init($settings['model']);
 		$conditions = $settings['conditions'];
 		$this->Behaviors->disable('List');
 		$conditions['NOT']['id'] = array_values($this->find('list', array(
-			'conditions' => array('super_section' => $settings['superSection']),
+			'conditions' => array('super_section' => $superSection),
 			'fields' => array('foreign_id', 'foreign_id'),
 		)));
 		$this->Behaviors->enable('List');
@@ -52,8 +59,8 @@ class MiList extends MiListsAppModel {
 		foreach($rows as $id) {
 			$this->create();
 			$toSave = array(
-				'section' => $section,
-				'super_section' => $settings['superSection'],
+				'section' => $settings['name'],
+				'super_section' => $superSection,
 				'model' => $settings['model'],
 				'foreign_id' => $id,
 			);

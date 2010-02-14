@@ -9,89 +9,44 @@ class MiListsController extends MiListsAppController {
 	public $helpers = array(
 	);
 
+	public $uses = array(
+		'MiLists.MiList',
+		'MiDataBuckets.DataBucket'
+	);
+
+	public function beforeFilter() {
+		parent::beforeFilter();
+		$superSection = $this->Session->read('MiLists.superSection');
+		$userId = $this->Auth->user('id');
+		$this->DataBucket->id = $this->DataBucket->field('id', array(
+			'key' => "MiLists.$superSection.$userId"
+		));
+	}
+
 	public function admin_auto_populate() {
 		$toProcess = array();
 		$lists = MiCache::setting('Lists');
-		foreach($lists as $section => $params) {
-			if (empty($params['allowAutoUpdate'])) {
-				continue;
-			}
-			$toProcess[$params['superSection']][$params['priority']] = $section;
-		}
-		foreach($toProcess as $listPacket) {
-			$this->MiList->autoPopulate($listPacket);
+		foreach($lists as $super => $_) {
+			$this->MiList->autoPopulate($super);
 		}
 		$this->redirect(array('action' => 'index'));
 	}
 
-	public function admin_add() {
-		if ($this->data) {
-			if ($this->MiList->saveAll($this->data)) {
-				$display = $this->MiList->display();
-				$this->Session->setFlash(sprintf(__d('mi_lists', 'Mi list "%1$s" added', true), $display));
-				return $this->_back();
-			} else {
-				$this->data = $this->MiList->data;
-				if (Configure::read()) {
-					foreach ($this->MiList->validationErrors as $i => &$error) {
-						if (is_array($error)) {
-							$error = implode($error, '<br />');
-						}
-					}
-					$this->Session->setFlash(implode($this->MiList->validationErrors, '<br />'));
-				} else {
-					$this->Session->setFlash(__d('mi_lists', 'errors in form', true));
-				}
-			}
-		}
-		$this->_setSelects(false);
-		$this->render('admin_edit');
+	public function admin_add($superSection, $section, $id) {
+		$data = $this->DataBucket->read();
+		list($ids) = array_chunk($ids, MiCache::setting("List.$superSection.sublist.$section.limit" - 1, true);
+		$ids[$id] = $id;
+		break;
+
 	}
 
 	public function admin_delete($id = null) {
-		$this->MiList->id = $id;
-		if ($id && $this->MiList->exists()) {
-			$display = $this->MiList->display($id);
-			if ($this->MiList->delete($id)) {
-				$this->Session->setFlash(sprintf(__d('mi_lists', 'Mi list %1$s "%2$s" deleted', true), $id, $display));
-			} else {
-				$this->Session->setFlash(sprintf(__d('mi_lists', 'Problem deleting mi list %1$s "%2$s"', true), $id, $display));
-			}
-		} else {
-			$this->Session->setFlash(sprintf(__d('mi_lists', 'Mi list with id %1$s doesn\'t exist', true), $id));
-		}
-		return $this->_back();
 	}
 
-	public function admin_edit($id = null) {
-		if ($this->data) {
-			if ($this->MiList->saveAll($this->data)) {
-				$display = $this->MiList->display();
-				$this->Session->setFlash(sprintf(__d('mi_lists', 'Mi list "%1$s" updated', true), $display));
-				return $this->_back();
-			} else {
-				$this->data = $this->MiList->data;
-				if (Configure::read()) {
-					foreach ($this->MiList->validationErrors as $i => &$error) {
-						if (is_array($error)) {
-							$error = implode($error, '<br />');
-						}
-					}
-					$this->Session->setFlash(implode($this->MiList->validationErrors, '<br />'));
-				} else {
-					$this->Session->setFlash(__d('mi_lists', 'errors in form', true));
-				}
-			}
-		} elseif ($id) {
-			$this->data = $this->MiList->read(null, $id);
-			if (!$this->data) {
-				$this->Session->setFlash(sprintf(__d('mi_lists', 'Mi list with id %1$s doesn\'t exist', true), $id));
-				$this->_back();
-			}
-		} else {
-			return $this->_back();
-		}
-		$this->_setSelects(false);
+	public function admin_move_down($id = null) {
+	}
+
+	public function admin_move_up($id = null) {
 	}
 
 	public function admin_index() {
@@ -128,152 +83,214 @@ class MiListsController extends MiListsAppController {
 		return $this->render('/elements/lookup_results');
 	}
 
-	public function admin_manage($superSection = null) {
-
-	}
-
-	public function admin_multi_add() {
+	function admin_home($term = null) {
 		if ($this->data) {
-			$data = array();
-			foreach ($this->data as $key => $row) {
-				if (!is_numeric($key) || !array_filter(current($row))) {
-					continue;
-				}
-				$data[$key] = $row;
+			if (!empty($_POST['submit']) && $_POST['submit'] === 'Grabar') {
+				$this->MiList->update(
+				$Portada = ClassRegistry::init('Portada')->update($this->Session->read('Noticias.Home'));
+				$this->Session->write(__d('panel', 'Index updated', true));
+				$this->redirect(array('plugin' => false, 'prefix' => false, 'admin' => false, 'action' => 'index'));
 			}
-			if ($this->MiList->saveAll($data, array('validate' => 'first', 'atomic' => false))) {
-				$this->Session->setFlash(sprintf(__d('mi_lists', 'Milists added', true)));
-				$this->_back();
-			} else {
-				if (Configure::read()) {
-					foreach ($this->MiList->validationErrors as $i => &$error) {
-						if (is_array($error)) {
-							$error = implode($error, '<br />');
+
+			if (!empty($this->data['query'])) {
+				$term = trim($this->data['query']);
+				$url = array(urlencode($term));
+				$this->redirect($url);
+			}
+		}
+		if ($this->params['named']) {
+			$keys = array_intersect_key(
+				$this->params['named'],
+				array_flip(	array(
+					'add',
+					'delete',
+					'move_down',
+					'move_up',
+					'section'
+				))
+			);
+			if (!empty($keys['section'])) {
+				$section = $keys['section'];
+				unset($keys['section']);
+				$action = key($keys);
+				$id = current($keys);
+				$ids = $this->Session->read('Noticias.Home.' . $section);
+				switch ($action) {
+					case 'add':
+						$maxSizes = array(1 => 2, 2 => 6, 3 => 8);
+						$maxSize = $maxSizes[$section];
+						list($ids) = array_chunk($ids, $maxSize - 1, true);
+						$ids[$id] = $id;
+						break;
+					case 'delete':
+						$key = array_search($id, $ids);
+						unset ($ids[$key]);
+						break;
+					case 'move_up':
+						$key = array_search($id, $ids);
+						$_key = $prev = null;
+						while (list($_key, $_prev) = each($ids)) {
+							if ($key === $_key) {
+								break;
+							}
+							$prev = $_key;
 						}
-					}
-					if($this->MiList->validationErrors) {
-						$this->Session->setFlash(implode($this->MiList->validationErrors, '<br />'));
-					} else {
-						$this->Session->setFlash(__d('mi_lists', 'Save did not succeed with no validation errors', true));
-					}
-				} else {
-					$this->Session->setFlash(__d('mi_lists', 'Some or all additions did not succeed', true));
-				}
-			}
-		} else {
-			$this->data = array('1' => array('MiList' => $this->MiList->create()));
-			$this->data[1]['MiList']['id'] = null;
-		}
-		$this->_setSelects(false);
-		$this->render('admin_multi_edit');
-	}
-
-	public function admin_multi_edit() {
-		if ($this->data) {
-			$data = array();
-			foreach ($this->data as $key => $row) {
-				if (!is_numeric($key)) {
-					continue;
-				}
-				$data[$key] = $row;
-			}
-			if ($this->MiList->saveAll($data, array('validate' => 'first'))) {
-				$this->Session->setFlash(sprintf(__d('mi_lists', 'Milists updated', true)));
-			} else {
-				if (Configure::read()) {
-					foreach ($this->MiList->validationErrors as $i => &$error) {
-						if (is_array($error)) {
-							$error = implode($error, '<br />');
+						if (!empty($ids[$prev])) {
+							$ids[$key] = $ids[$prev];
+							$ids[$prev] = $id;
+							$ids = array_values($ids);
+							$ids = array_combine($ids, $ids);
 						}
-					}
-					if($this->MiList->validationErrors) {
-						$this->Session->setFlash(implode($this->MiList->validationErrors, '<br />'));
-					} else {
-						$this->Session->setFlash(__d('mi_lists', 'Save did not succeed with no validation errors', true));
-					}
-				} else {
-					$this->Session->setFlash(__d('mi_lists', 'Some or all updates did not succeed', true));
+						break;
+					case 'move_down':
+						$key = array_search($id, $ids); $_key = $_next = null;
+						while (list($_key, $_next) = each($ids)) {
+							if ($key === $_key) {
+								list($next, $_next) = each($ids);
+								break;
+							}
+						}
+						if (!empty($ids[$next])) {
+							$ids[$key] = $ids[$next];
+							$ids[$next] = $id;
+							$ids = array_values($ids);
+							$ids = array_combine($ids, $ids);
+						}
+						break;
 				}
+				$this->Session->write("Noticias.Home.$section", $ids);
+				$this->redirect(array());
 			}
-			$this->params['paging'] = $this->Session->read('MiList.paging');
-			$this->helpers[] = 'Paginator';
+		}
+		if ($term) {
+			$conditions = $this->Noticia->searchConditions($term);
 		} else {
-			$args = func_get_args();
-			call_user_func_array(array($this, 'admin_index'), $args);
-			array_unshift($this->data, 'dummy');
-			unset($this->data[0]);
-			$this->Session->write('MiList.paging', $this->params['paging']);
+			$conditions = array();
 		}
-		$this->_setSelects(false);
-	}
+		$conditions['Noticia.tipo'] = 1;
+		$sections = $this->Session->read('Noticias.Home');
+		if (!$sections || !empty($this->params['named']['reset'])) {
+			$Portada = ClassRegistry::init('Portada');
+			$sections = $Portada->find('list', array(
+				'fields' => array('noticia_id', 'noticia_id', 'seccion'),
+				'order' => 'orden'
+			));
+			$this->Session->write('Noticias.Home', $sections);
+		}
 
-	public function admin_multi_process($action = null) {
-		if (!$this->data) {
-			$this->_back();
+		$alreadyChosen = array();
+		foreach($sections as $ids) {
+			$alreadyChosen = array_merge($alreadyChosen, $ids);
 		}
-		$ids = array_filter($this->data['MiList']);
-		if (!$ids) {
-			$this->Session->setFlash(__d('mi_lists', 'Nothing selected, nothing to do', true));
-			$this->_back();
-		}
-		if($action === null) {
-			if (isset($_POST['deleteAll'])) {
-				$action = 'delete';
-				$message = __d('mi_lists', 'Milists deleted.', true);
-			} elseif (isset($_POST['editAll'])) {
-				$ids = array_keys(array_filter($this->data['MiList']));
-				return $this->redirect(array(
-					'action' => 'multi_edit',
-					'id' => '(' . implode($ids, ',') . ')'
-				));
-			} else {
-				$this->Session->setFlash(__d('mi_lists', 'No action defined, don\'t know what to do', true));
-				$this->_back();
-			}
-		}
-		foreach($ids as $id => $do) {
-			switch($action) {
-				case 'delete':
-					$this->MiList->delete($id);
-					break;
-			}
-		}
-		$this->Session->setFlash($message);
-		$this->_back();
-	}
 
-	public function admin_search($term = null) {
-		if ($this->data) {
-			$term = trim($this->data['MiList']['query']);
-			$url = array(urlencode($term));
-			if (!empty($this->data['MiList']['extended'])) {
-				$url['extended'] = true;
+		foreach($sections as $section => &$ids) {
+			$rows = $this->Noticia->find('all', array(
+				'conditions' => array('Noticia.id' => $ids)
+			));
+			foreach($rows as $row) {
+				$ids[$row['Noticia']['id']] = $row;
 			}
-			$this->redirect($url);
 		}
-		$request = $_SERVER['REQUEST_URI'];
-		$term = trim(str_replace(Router::url(array()), '', $request), '/');
-		if (!$term) {
-			$this->redirect(array('action' => 'index'));
-		}
-		$conditions = $this->MiList->searchConditions($term, isset($this->passedArgs['extended']));
-		$this->Session->setFlash(sprintf(__d('mi_lists', 'All milists matching the term "%1$s"', true), htmlspecialchars($term)));
+		$this->set(compact('sections'));
+		$conditions['NOT']['Noticia.id'] = $alreadyChosen;
 		$this->data = $this->paginate($conditions);
+		if (!empty($this->params['isAjax'])) {
+			$this->set('class', 'draggableItems');
+			return $this->render('/elements/noticias/home_select');
+		}
 		$this->_setSelects();
-		$this->render('admin_index');
 	}
 
-	public function admin_view($id = null) {
-		$this->data = $this->MiList->read(null, $id);
-		$Model = ClassRegistry::init($this->data['MiList']['model']);
-		$alias = Inflector::underscore(Inflector::pluralize($this->data['MiList']['model']));
-		$values[$this->data['MiList']['foreign_id']] = $Model->display($this->data['MiList']['foreign_id']);
-		$this->set($alias, $values);
+	public function admin_manage($superSection = null, $section = null) {
+		if ($superSection === 'index') { // TODO fix this
+			$superSection = null;
+		}
+		if (!$superSection) {
+			$config = MiCache::setting('Lists');
+			if (count($config) === 1) {
+				$this->redirect(array(key($config)));
+			} else {
+				if (!$config) {
+					$this->Session->setFlash(__d('mi_lists', 'No lists are defined', true));
+					$this->_back();
+				}
+				$this->Session->setFlash(__d('mi_lists', 'Select a super section to manage', true));
+				$this->redirect(array('action' => 'index'));
+			}
+		}
+		if ($this->data) {
+			if (!empty($_POST['submit']) && $_POST['submit'] === 'Save') {
+				$this->loadModel('MiDataBuckets.DataBucket');
+				$data = $this->DataBucket->data($key);
+				$this->MiList->update($superSection, $section, $data);
+				$this->redirect(array('action' => 'index'));
+			}
 
-		$this->_setSelects();
-		if(!$this->data) {
-			$this->Session->setFlash(__d('mi_lists', 'Invalid mi list', true));
-			return $this->_back();
+			if (!empty($this->data['query'])) {
+				$term = trim($this->data['query']);
+				$url = array($superSection, $section, 'query' => urlencode($term));
+				$this->redirect($url);
+			}
+		}
+
+		$config = MiCache::setting('Lists.' . $superSection);
+		if ($section) {
+			$sectionConfig = $config['sublists'][$section];
+		} else {
+			$sectionConfig = current($config['sublists']);
+		}
+		$sectionConfig = array_merge($config, $sectionConfig);
+		unset($sectionConfig['sublists']);
+
+		$conditions = array('super_section' => $superSection);
+		if ($section) {
+			$conditions = array('section' => $section);
+		}
+
+		$sections = null; // find from databucket
+		if (!$sections || !empty($this->params['named']['reset'])) {
+			$this->MiList->Behaviors->disable('List');
+			$sections = $this->MiList->find('list', array(
+				'fields' => array('foreign_id', 'foreign_id', 'section'),
+				'conditions' => $conditions,
+				'order' => array('super_section', 'section', 'order')
+			));
+			$this->MiList->Behaviors->enable('List');
+		}
+
+		$alreadyChosen = array();
+		foreach($sections as $ids) {
+			$alreadyChosen = array_merge($alreadyChosen, $ids);
+		}
+
+		$model = $sectionConfig['model'];
+		$this->loadModel($model);
+
+		foreach($sections as $section => &$ids) {
+			$ids = $this->$model->find('list', array(
+				'conditions' => array($model . '.id' => $ids)
+			));
+		}
+		if (empty($this->params['named']['query'])) {
+			$conditions = array();
+		} else {
+			$conditions = $this->$model->searchConditions($this->params['named']['query']);
+		}
+		if ($sectionConfig['conditions']) {
+			$conditions = array_merge($conditions, $sectionConfig['conditions']);
+		}
+		$conditions['NOT'][$model . '.id'] = $alreadyChosen;
+		$this->data = $this->paginate($model, $conditions);
+		$alreadyChosen = array_merge($alreadyChosen, Set::extract($this->data, "/$model/id"));
+		$titles = $this->$model->find('list', array(
+			'conditions' => array($model . '.id' => $alreadyChosen)
+		));
+		$controller = __(Inflector::pluralize($model), true);
+		$title = sprintf(__d('mi_lists', 'All %s', true), $controller);
+		$this->set(compact('titles', 'sections', 'config', 'title', 'superSection', 'section', 'controller'));
+		if (!empty($this->params['isAjax'])) {
+			$this->set('class', 'draggableItems');
+			return $this->render('/elements/mi_lists/select');
 		}
 	}
 
