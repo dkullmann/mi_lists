@@ -16,7 +16,7 @@ class MiListsController extends MiListsAppController {
 			if (empty($params['allowAutoUpdate'])) {
 				continue;
 			}
-			$toProcess[$params['relatedId']][$params['priority']] = $section;
+			$toProcess[$params['superSection']][$params['priority']] = $section;
 		}
 		foreach($toProcess as $listPacket) {
 			$this->MiList->autoPopulate($listPacket);
@@ -126,6 +126,10 @@ class MiListsController extends MiListsAppController {
 			return;
 		}
 		return $this->render('/elements/lookup_results');
+	}
+
+	public function admin_manage($superSection = null) {
+
 	}
 
 	public function admin_multi_add() {

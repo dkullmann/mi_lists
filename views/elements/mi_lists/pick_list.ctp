@@ -8,25 +8,21 @@ if (!isset($class)) {
 if (!$data) {
 	echo '<li class="empty"> </li>';
 }
-foreach ($data as $i => $row) {
-	if (empty($model)) {
-		$model = key($row);
-	}
-	extract($row);
+foreach ($data as $id => $title) {
 	echo '<li>';
-	echo $text->truncate($titles[$row[$model]['id']], 60);
-	$menu->settings('listMove', array('class' => 'actions tree-options'));
+	echo $html->link($text->truncate($title, 60), array('controller' => $controller, 'action' => 'view', $id));
+	$menu->settings('listManage', array('class' => 'actions tree-options'));
 	if ($class === 'draggableItems') {
-		foreach(array_keys($sections) as $section) {
+		foreach($sections as $s) {
 			$menu->add(array(
-				array('title' => '+ ' . $section, 'url' => array ('add' => $row[$model]['id'], 'section' => $section), 'class' => 'mini-icon mini-plus'),
+				array('title' => '+ ' . $s, 'url' => array ('add' => $id, 'section' => $s), 'class' => 'mini-icon mini-plus'),
 			));
 		}
 	} else {
 		$menu->add(array(
-			array('title' => 'x', 'url' => array('delete' => $row[$model]['id'], 'section' => $section), 'class' => 'mini-icon mini-close'),
-			array('title' => '↑', 'url' => array ('move_up' => $row[$model]['id'], 'section' => $section), 'class' => 'mini-icon mini-arrowthick-1-n'),
-			array('title' => '↓', 'url' => array ('move_down' => $row[$model]['id'], 'section' => $section), 'class' => 'mini-icon mini-arrowthick-1-s'),
+			array('title' => 'x', 'url' => array('delete' => $id, 'section' => $section), 'class' => 'mini-icon mini-close'),
+			array('title' => '↑', 'url' => array ('move_up' => $id, 'section' => $section), 'class' => 'mini-icon mini-arrowthick-1-n'),
+			array('title' => '↓', 'url' => array ('move_down' => $id, 'section' => $section), 'class' => 'mini-icon mini-arrowthick-1-s'),
 		));
 	}
 	echo $menu->display();

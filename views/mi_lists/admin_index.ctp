@@ -5,7 +5,8 @@ echo $form->create(null, array('action' => 'multi_process'));
 <?php
 $this->set('title_for_layout', __d('mi_lists', 'Mi Lists', true));
 $th = array(
-	$form->checkbox('Mark.allMi Lists', array('class' => 'markAll')),
+	$form->checkbox('Mark.all Lists', array('class' => 'markAll')),
+	$paginator->sort('super_section'),
 	$paginator->sort('section'),
 	$paginator->sort('order'),
 	__d('mi_lists', 'Linked to', true),
@@ -25,6 +26,7 @@ foreach ($data as $i => $row) {
 		array(
 			$form->checkbox('MiList.' . $MiList['id'], array('class' => 'identifyRow')) .
 				$html->link($MiList['id'], array('action' => 'view', $MiList['id']), array('class' => 'hidden')),
+			$MiList['super_section'],
 			$MiList['section'],
 			$MiList['order'],
 			$html->link(${$linkedController}[$MiList['foreign_id']], array('controller' => $linkedController, 'action' => 'view', $MiList['foreign_id'])),
@@ -49,7 +51,6 @@ echo $form->end();
 echo $this->element('mi_panel/paging');
 $menu->settings(__d('mi_lists', 'Options', true), array());
 $menu->add(array(
-	array('title' => __d('mi_lists', 'New Mi List', true), 'url' => array('action' => 'add')),
-	array('title' => __d('mi_lists', 'Add Mi Lists', true), 'url' => array('action' => 'multi_add')),
+	array('title' => __d('mi_lists', 'Auto populate', true), 'url' => array('action' => 'auto_populate')),
 	//array('title' => __d('mi_lists', 'Edit These Mi Lists', true), 'url' => am($this->passedArgs, array('action' => 'multi_edit')))
 ));
