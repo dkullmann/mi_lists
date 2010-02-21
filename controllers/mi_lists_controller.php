@@ -23,20 +23,33 @@ class MiListsController extends MiListsAppController {
 		));
 	}
 
-	public function admin_auto_populate() {
-		$toProcess = array();
-		$lists = MiCache::setting('Lists');
-		foreach($lists as $super => $_) {
-			$this->MiList->autoPopulate($super);
+	public function admin_auto_populate($super = null, $section = null) {
+		if ($super) {
+			$supers = array($super);
+		} else {
+			$supers = array_keys(MiCache::setting('MiLists'));
+			$section = null;
+		}
+		foreach($supers as $super) {
+			if ($section) {
+				$sections = array($section);
+			} else {
+				$sections = array_keys(MiCache::setting("MiLists.$super.sublists"));
+			}
+			foreach($sections as $section) {
+				$this->MiList->autoPopulate($super, $section);
+			}
 		}
 		$this->redirect(array('action' => 'index'));
 	}
 
-	public function admin_add($superSection, $section, $id) {
+	public function admin_add($superSection = null, $section = null, $id = null) {
 		$data = $this->DataBucket->read();
-		list($ids) = array_chunk($ids, MiCache::setting("List.$superSection.sublist.$section.limit" - 1, true);
+		debug(MiCache::setting("List")); die;
+		list($ids) = array_chunk($ids, MiCache::setting("List.$superSection.sublist.$section.limit" - 1, true));
 		$ids[$id] = $id;
 		break;
+		debug ($data); die;
 
 	}
 
@@ -86,7 +99,6 @@ class MiListsController extends MiListsAppController {
 	function admin_home($term = null) {
 		if ($this->data) {
 			if (!empty($_POST['submit']) && $_POST['submit'] === 'Grabar') {
-				$this->MiList->update(
 				$Portada = ClassRegistry::init('Portada')->update($this->Session->read('Noticias.Home'));
 				$this->Session->write(__d('panel', 'Index updated', true));
 				$this->redirect(array('plugin' => false, 'prefix' => false, 'admin' => false, 'action' => 'index'));
@@ -206,7 +218,7 @@ class MiListsController extends MiListsAppController {
 			$superSection = null;
 		}
 		if (!$superSection) {
-			$config = MiCache::setting('Lists');
+			$config = MiCache::setting('MiLists');
 			if (count($config) === 1) {
 				$this->redirect(array(key($config)));
 			} else {
@@ -233,7 +245,7 @@ class MiListsController extends MiListsAppController {
 			}
 		}
 
-		$config = MiCache::setting('Lists.' . $superSection);
+		$config = MiCache::setting('MiLists.' . $superSection);
 		if ($section) {
 			$sectionConfig = $config['sublists'][$section];
 		} else {

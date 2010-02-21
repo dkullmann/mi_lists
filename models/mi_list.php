@@ -31,7 +31,7 @@ class MiList extends MiListsAppModel {
 			$this->deleteAll(array('section' => $sections));
 		} else {
 			$this->deleteAll(array('super_section' => $superSection));
-			$sections = array_keys(MiCache::setting("Lists.$superSection.sublists"));
+			$sections = array_keys(MiCache::setting("MiLists.$superSection.sublists"));
 		}
 		foreach($sections as $section) {
 			$this->_autoPopulate($superSection, $section);
@@ -39,8 +39,8 @@ class MiList extends MiListsAppModel {
 	}
 
 	function _autoPopulate($superSection, $section = null) {
-		$sSettings = MiCache::setting("Lists.$superSection");
-		$settings = MiCache::setting("Lists.$superSection.sublists.$section");
+		$sSettings = MiCache::setting("MiLists.$superSection");
+		$settings = MiCache::setting("MiLists.$superSection.sublists.$section");
 		$settings = array_merge($sSettings, $settings);
 		$Model = ClassRegistry::init($settings['model']);
 		$conditions = $settings['conditions'];
@@ -66,5 +66,12 @@ class MiList extends MiListsAppModel {
 			);
 			$this->save($toSave);
 		}
+	}
+	function _checkSetup() {
+		if (MiCache::setting('MiLists')) {
+			return;
+		}
+		ClassRegistry::init('MiSettings.Setting')->loadDefaults('mi_lists');
+		die;
 	}
 }

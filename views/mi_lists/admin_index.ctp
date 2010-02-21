@@ -54,7 +54,7 @@ $menu->add(array(
 	array('title' => __d('mi_lists', 'Auto populate', true), 'url' => array('action' => 'auto_populate')),
 	//array('title' => __d('mi_lists', 'Edit These Mi Lists', true), 'url' => am($this->passedArgs, array('action' => 'multi_edit')))
 ));
-$sections = array_keys(MiCache::setting('Lists'));
+$sections = array_keys(MiCache::setting('MiLists'));
 foreach($sections as $section) {
 	$menu->add(array(
 		array('title' => sprintf(__d('mi_lists', 'Manage "%s"', true), $section), 'url' => array('action' => 'manage', $section)),

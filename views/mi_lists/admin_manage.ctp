@@ -6,7 +6,11 @@
 	<div class="container droppable">
 		<h3><?php echo $section['name'] . ' [' . $section['limit'] . ' ]' ?></h3>
 		<?php
-		echo $this->element('mi_lists/pick_list', array('data' => $sections[$section['name']], 'section' => $section));
+		echo $this->element('mi_lists/pick_list', array(
+			'data' => $sections[$section['name']],
+			'section' => $section['name'],
+			'superSection' => $this->params['pass'][0]
+		));
 		?>
 	</div>
 <?php endforeach; ?>

@@ -50,7 +50,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 $config = array (
-	'Lists' => array (
+	'MiLists' => array (
 		'home' => array (
 			'model' => array (
 				'description' => 'Which model to use',
@@ -69,7 +69,7 @@ $config = array (
 			),
 			'order' => array (
 				'description' => 'If auto updating, what field to use in the sort order?',
-				'value' => 'created',
+				'value' => 'created DESC',
 				'type' => 'string',
 			),
 			'sublists' => array (
