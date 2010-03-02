@@ -5,18 +5,15 @@ if (!isset($class)) {
 ?>
 <ol class="<?php echo $class?>">
 <?php
-if (!$data) {
-	echo '<li class="empty"> </li>';
-}
 foreach ($data as $id => $title) {
-	echo '<li>';
 	if (is_array($title)) {
 		if (empty($model)) {
 			$model = key($title);
-			$id = $title[$model]['id'];
 		}
+		$id = $title[$model]['id'];
 		$title = $titles[$title[$model]['id']];
 	}
+	echo "<li id='Row-$id'>";
 	echo $html->link($text->truncate($title, 60), array('controller' => $controller, 'action' => 'view', $id));
 	$menu->settings('listManage', array('class' => 'actions tree-options'));
 	if ($class === 'draggableItems') {
