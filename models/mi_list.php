@@ -38,6 +38,9 @@ class MiList extends MiListsAppModel {
 		}
 	}
 
+	function update($superSection, $section, $data() {
+	}
+
 	function _autoPopulate($superSection, $section = null) {
 		$sSettings = MiCache::setting("MiLists.$superSection");
 		$settings = MiCache::setting("MiLists.$superSection.sublists.$section");

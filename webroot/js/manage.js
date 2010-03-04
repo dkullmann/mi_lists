@@ -30,7 +30,7 @@ $(function() {
 					width: 1100,
 					height: 500
 				});
-			$.unblockUI();
+			//$.unblockUI();
 			return false;
 		}
 	}
@@ -130,8 +130,8 @@ $(function() {
 		return false;
 	});
 
-	$("#MiListsSave").submit(function() {
-		$.blockUI();
+	$("#MiListsSave").click(function() {
+		//$.blockUI();
 		var results = {};
 		$('.halfWidthRight div ol').each(function() {
 			var section = $(this).attr('id').replace('section-', '');
@@ -140,10 +140,10 @@ $(function() {
 				results["data[" + section + "][" + id + "]"] = id;
 			});
 		});
-		results["submit"] = 'Grabar';
+		results["submit"] = 'Save';
 		$.ajax({
 			type: 'POST',
-			url: $(this).attr('action') + '.json',
+			url: $(this).parents('form').attr('action') + '.json',
 			data: results,
 			success: function (data) {
 				if (typeof(data) === "string") {
@@ -156,7 +156,7 @@ $(function() {
 				callbacks.flashMessage(data);
 				if (data.result == 'success') {
 				} else {}
-				$.unblockUI();
+				//$.unblockUI();
 			},
 			dataType: 'json'
 		});
@@ -164,7 +164,7 @@ $(function() {
 	});
 
 	$("a#MiListsPreview").click(function() {
-		$.blockUI();
+		//$.blockUI();
 		var results = {};
 		$('.halfWidthRight div ol').each(function() {
 			var section = $(this).attr('id').replace('section-', '');
@@ -189,7 +189,7 @@ $(function() {
 				callbacks.flashMessage(data);
 				if (data.result == 'success') {
 				} else {}
-				$.unblockUI();
+				//$.unblockUI();
 			},
 			dataType: 'json'
 		});

@@ -2,8 +2,11 @@
 if (!isset($class)) {
 	$class = '';
 }
+if ($class === 'draggableItems') {
+	$section = $superSection;
+}
 ?>
-<ol class="<?php echo $class?>">
+<ol id="section-<?php echo $section ?>" class="<?php echo $class?>">
 <?php
 foreach ($data as $id => $title) {
 	if (is_array($title)) {
