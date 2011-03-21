@@ -38,7 +38,7 @@ class MiList extends MiListsAppModel {
 		}
 	}
 
-	function update($superSection, $section, $data()) {
+	function update($superSection, $section, $data) {
 	}
 
 	function _autoPopulate($superSection, $section = null) {
